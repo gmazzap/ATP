@@ -58,41 +58,48 @@ if ( ! defined( 'DOING_AJAX' ) ) {
     return;
 }
 
+$nopriv = is_user_logged_in() ? '' : 'nopriv_';
+add_action( "wp_ajax_{$nopriv}ajaxtemplatepart", function() {
 
-add_action( 'wp_ajax_' . ( is_user_logged_in() ? '' : 'nopriv_' ) . 'ajaxtemplatepart', function() {
-
-    static $loader = NULL;
-
-    if ( ! is_null( $loader ) ) {
+    static $count = 0;
+    if ( $count > 0 ) {
         exit();
     }
+    $count ++;
 
     $loader = new GM\ATP\Loader();
+    $cache_provider = new GM\ATP\Cache\Provider();
 
-    $drivers = Stash\DriverList::getAvailableDrivers();
-    $cache = new GM\ATP\CacheProvider( new GM\ATP\FileSystem, $drivers );
-
-    if ( ! $cache->shouldCache() ) {
+    // no caching
+    if ( ! $cache_provider->isEnabled() ) {
         $loader->getData();
         exit();
     }
 
-    try {
-        $driver_class = $cache->getDriverClass();
-        $options = $cache->getDriverOptions( $driver_class );
-        $cache_driver = FALSE;
-        if ( is_array( $options ) && class_exists( $driver_class ) ) {
-            $cache_driver = new $driver_class;
-        }
-        if ( $cache_driver instanceof Stash\Interfaces\DriverInterface ) {
-            $cache_driver->setOptions( $options );
-            $cache->setPool( new Stash\Pool( $cache_driver ) );
-            $loader->setCacheProvider( $cache );
-        }
-    } catch ( Exception $e ) {
-        //
+    // custom object cache already installed: use that
+    $transient = new GM\ATP\Cache\TransientHandler();
+    if ( $transient->isAvailable() ) {
+        $cache_provider->setHandler( $transient );
+        $loader->setCacheProvider( $cache_provider );
+        $loader->getData();
+        exit();
     }
+    unset( $transient );
 
+    // let's use Stash and let users choose a driver via
+    // `"ajax_template_cache_driver"` and `"ajax_template_{$driver}_driver_conf"` filter hooks.
+    // FileSystem driver by default
+    $picker = new GM\ATP\Cache\StashDriverPicker( new GM\ATP\FileSystem );
+    $driver_class = $picker->getDriverClass();
+    if ( class_exists( $driver_class ) ) {
+        $driver = new $driver_class;
+    }
+    $options = $picker->getDriverOptions( $driver_class );
+    if ( $picker->checkDriver( $driver, $options ) ) {
+        $handler = new GM\ATP\Cache\StashHandler( new Stash\Pool( $driver ) );
+        $cache_provider->setHandler( $handler );
+        $loader->setCacheProvider( $cache_provider );
+    }
     $loader->getData();
 
     exit();

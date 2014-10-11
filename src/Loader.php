@@ -22,7 +22,7 @@ class Loader {
         call_user_func( "wp_send_json_{$result}", $this->output );
     }
 
-    public function setCacheProvider( CacheProvider $cache ) {
+    public function setCacheProvider( Cache\Provider $cache ) {
         $this->cache = $cache;
     }
 
@@ -89,12 +89,9 @@ class Loader {
         if ( ! $this->shouldCache() ) {
             return;
         }
-        $provider = $this->getCacheProvider();
-        $key = $provider->getKey( $this->templates_data, $this->query_data );
-        $item = $provider->getPool()->getItem( $key );
-        $data = $item->get();
-        if ( ! $item->isMiss() && ! empty( $data ) ) {
-            wp_send_json_success( $data );
+        $cached = $this->getCacheProvider()->get( $this->templates_data, $this->query_data );
+        if ( ! empty( $cached ) && is_array( $cached ) ) {
+            wp_send_json_success( $cached );
         }
     }
 
@@ -103,18 +100,13 @@ class Loader {
             return;
         }
         add_action( 'shutdown', function() {
-            $provider = $this->getCacheProvider();
-            $key = $provider->getKey( $this->templates_data, $this->query_data );
-            $item = $provider->getPool()->getItem( $key );
-            $item->clear();
-            $item->lock();
-            $item->set( $this->output, $provider->getTTL() );
+            $this->getCacheProvider()->set( $this->output, $this->templates_data, $this->query_data );
         } );
     }
 
     private function shouldCache() {
         $provider = $this->getCacheProvider();
-        return ! is_null( $provider ) && $provider->getPool() instanceof \Stash\PoolInterface;
+        return $provider instanceof Cache\Provider && $provider->shouldCache();
     }
 
 }
