@@ -47,7 +47,7 @@ if ( ! function_exists( 'ajax_template_part' ) ) {
 
 if ( ! function_exists( 'ajax_template_part_content' ) ) {
 
-    function ajax_template_part( $name, $slug = '' ) {
+    function ajax_template_part_content( $content, $name, $slug = '' ) {
         GM\ATP\Templater::tag( $name, $slug, $content );
     }
 
