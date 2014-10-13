@@ -8,7 +8,10 @@ class Templater {
     private $path;
     private $debug;
 
-    public static function tag( $name, $slug ) {
+    public static function tag( $name, $slug, $content = '' ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            return get_template_part( $name, $slug );
+        }
         if ( is_admin() || ! is_string( $name ) || ! is_string( $slug ) ) {
             return;
         }
@@ -18,7 +21,7 @@ class Templater {
             self::$templater = new $class( $GLOBALS[ 'wp' ], $GLOBALS[ 'wp_query' ], $path );
             self::$templater->addJs();
         }
-        self::$templater->addHtml( sanitize_title( $name ), sanitize_title( $slug ) );
+        self::$templater->addHtml( sanitize_title( $name ), sanitize_title( $slug ), $content );
     }
 
     public function __construct( \WP $wp, \WP_Query $query, $path ) {
@@ -28,26 +31,24 @@ class Templater {
         $this->debug = defined( 'WP_DEBUG' ) && WP_DEBUG;
     }
 
-    public function addHtml( $raw_name, $raw_slug ) {
+    public function addHtml( $raw_name, $raw_slug, $content = '' ) {
         static $n = 0;
         $n ++;
-        $html_class = $content = '';
         $name = esc_attr( filter_var( $raw_name, FILTER_SANITIZE_URL ) );
         $slug = esc_attr( filter_var( $raw_slug, FILTER_SANITIZE_URL ) );
         global $post;
-        $attr = ' style="display:none!important;"';
         $post_attr = '';
         if ( $post instanceof \WP_Post ) {
-            $post_attr = sprintf( ' data-post="%s"', $post->ID );
+            $post_attr = sprintf( ' data-post="%d"', $post->ID );
         }
-        if ( apply_filters( 'ajax_template_show_loading', FALSE, $name, $slug, $this->query ) ) {
-            $html_class = $this->getHtmlClass( $name, $slug );
+        if ( empty( $content ) ) {
             $content = $this->getHtmlContent( $name, $slug );
-            $attr = '';
         }
+        $class = $this->getHtmlClass( $name, $slug );
+        $attr = empty( $content ) && empty( $class ) ? ' style="display:none!important;"' : '';
         $attr .= " id=\"ajaxtemplate-{$name}-{$slug}-{$n}\"";
         $format = '<span%s%s data-ajaxtemplatename="%s" data-ajaxtemplateslug="%s"%s>%s</span>';
-        printf( $format, $attr, $post_attr, $name, $slug, $html_class, $content );
+        printf( $format, $attr, $post_attr, $name, $slug, $class, $content );
     }
 
     public function addJs() {
