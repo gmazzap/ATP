@@ -32,7 +32,7 @@ class StashDriverPicker {
         $driver_name = $this->getDriverName( $driver_class );
         if ( empty( $driver_name ) || $driver_name === 'FileSystem' ) {
             $path = $this->fs->getFolder();
-            return $path ? [ 'path' => $path ] : FALSE;
+            return $path ? [ 'path' => $path ] : [ ];
         }
         $name = strtolower( $this->driver_name );
         return apply_filters( "ajax_template_{$name}_driver_conf", FALSE );
