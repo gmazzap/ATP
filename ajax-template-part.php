@@ -2,7 +2,7 @@
 /*
   Plugin Name: Ajax Template Part
   Plugin URI: https://github.com/Giuseppe-Mazzapica/ajax-template-part
-  Description: Like get_template_part, but via AJAX
+  Description: Introduce ajax_template_part() function: like get_template_part(), but AJAX powered.
   Author: Giuseppe Mazzapica
   Author URI: http://gm.zoomlab.it/
   License: GPLv2+
