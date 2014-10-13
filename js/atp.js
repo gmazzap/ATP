@@ -23,6 +23,8 @@
             var $el = $('#' + el);
             if ($el.length && typeof data[el] === 'string') {
                 $el.replaceWith(data[el]).show();
+            } else {
+                $el.remove();
             }
         });
         $(document).trigger('ajax_template_part_success', ATP.map);
