@@ -33,9 +33,18 @@ class Loader {
 
     private function parseRequest() {
         $request = filter_input_array( INPUT_POST, [
-            'files_data' => [ 'filter' => FILTER_UNSAFE_RAW, 'flags' => FILTER_REQUIRE_ARRAY ],
-            'query_data' => [ 'filter' => FILTER_UNSAFE_RAW, 'flags' => FILTER_REQUIRE_ARRAY ],
-            'posts_data' => [ 'filter' => FILTER_SANITIZE_NUMBER_INT, 'flags' => FILTER_REQUIRE_ARRAY ]
+            'files_data' => [
+                'filter' => FILTER_UNSAFE_RAW,
+                'flags'  => FILTER_REQUIRE_ARRAY
+            ],
+            'query_data' => [
+                'filter' => FILTER_UNSAFE_RAW,
+                'flags'  => FILTER_REQUIRE_ARRAY
+            ],
+            'posts_data' => [
+                'filter' => FILTER_SANITIZE_NUMBER_INT,
+                'flags'  => FILTER_REQUIRE_ARRAY
+            ]
             ] );
         if ( ! empty( $request[ 'files_data' ] ) ) {
             $this->query_data = $request[ 'query_data' ] ? : [ ];
