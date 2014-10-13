@@ -6,10 +6,11 @@ use Stash\Interfaces\DriverInterface;
 class StashDriverPicker {
 
     private $fs;
-    private $drivers = [ ];
+    private $drivers;
 
-    function __construct( FileSystem $fs ) {
+    function __construct( FileSystem $fs, Array $drivers = [ ] ) {
         $this->fs = $fs;
+        $this->drivers = $drivers;
     }
 
     public function getDriverClass() {
@@ -34,7 +35,7 @@ class StashDriverPicker {
             $path = $this->fs->getFolder();
             return $path ? [ 'path' => $path ] : [ ];
         }
-        $name = strtolower( $this->driver_name );
+        $name = strtolower( $driver_name );
         return apply_filters( "ajax_template_{$name}_driver_conf", FALSE );
     }
 

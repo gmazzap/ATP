@@ -3,13 +3,15 @@
 use Pimple\Container as Pimple;
 use Stash\Interfaces\DriverInterface;
 use Stash\Pool as Stash;
+use Stash\DriverList;
 
 class Container extends Pimple {
 
     function __construct( Array $values = [ ] ) {
 
         $defaults = [
-            'loader' => function() {
+            'stash.drivers' => DriverList::getAvailableDrivers(),
+            'loader'        => function() {
                 return new Loader;
             },
             'filesystem' => function() {
@@ -19,7 +21,7 @@ class Container extends Pimple {
                 return new Cache\Provider;
             },
             'cache.driverpicker' => function($c) {
-                return new Cache\StashDriverPicker( $c[ 'filesystem' ] );
+                return new Cache\StashDriverPicker( $c[ 'filesystem' ], $c[ 'stash.drivers' ] );
             },
             'cache.stash' => function($c) {
                 $class = '\\' . ltrim( $c[ 'cache.driverpicker' ]->getDriverClass(), '\\' );
