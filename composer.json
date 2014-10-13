@@ -1,5 +1,5 @@
 {
-    "name": "gm/ajax-template-part",
+    "name": "giuseppe-mazzapica/ajax-template-part",
     "description": "Like get_template_part(), but AJAX powered",
     "keywords": ["wordpress", "ajax"],
     "type": "wordpress-plugin",
