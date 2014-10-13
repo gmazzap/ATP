@@ -73,8 +73,8 @@ class Loader {
             return FALSE;
         }
         $args = [ filter_var( $data[ 0 ], FILTER_SANITIZE_STRING ) ];
-        if ( ! empty( $data ) && is_string( $data[ 0 ] ) ) {
-            $args[] = filter_var( $data[ 0 ], FILTER_SANITIZE_STRING );
+        if ( ! empty( $data ) && is_string( $data[ 1 ] ) ) {
+            $args[] = filter_var( $data[ 1 ], FILTER_SANITIZE_STRING );
         }
         return array_filter( $args );
     }
