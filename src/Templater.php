@@ -16,7 +16,7 @@ class Templater {
             $class = get_called_class();
             $path = dirname( dirname( __FILE__ ) ) . '/ajax-template-part.php';
             self::$templater = new $class( $GLOBALS[ 'wp' ], $GLOBALS[ 'wp_query' ], $path );
-            add_action( 'wp_enqueue_scripts', [ self::$templater, 'addJs' ] );
+            self::$templater->addJs();
         }
         self::$templater->addHtml( sanitize_title( $name ), sanitize_title( $slug ) );
     }
@@ -28,10 +28,12 @@ class Templater {
         $this->debug = defined( 'WP_DEBUG' ) && WP_DEBUG;
     }
 
-    public function addHtml( $name, $slug ) {
+    public function addHtml( $raw_name, $raw_slug ) {
         static $n = 0;
         $n ++;
         $html_class = $content = '';
+        $name = esc_attr( filter_var( $raw_name, FILTER_SANITIZE_URL ) );
+        $slug = esc_attr( filter_var( $raw_slug, FILTER_SANITIZE_URL ) );
         $attr = ' style="display:none!important;"';
         if ( apply_filters( 'ajax_template_show_loading', FALSE, $name, $slug, $this->query ) ) {
             $html_class = $this->getHtmlClass( $name, $slug );
@@ -39,14 +41,17 @@ class Templater {
             $attr = '';
         }
         $attr .= " id=\"ajaxtemplate-{$name}-{$slug}-{$n}\"";
-        $format = '<span%s data-ajaxtemplatename="%s" data-ajaxtemplateslug="%s"%s"%s>%s</span>';
+        $format = '<span%s data-ajaxtemplatename="%s" data-ajaxtemplateslug="%s"%s>%s</span>';
         printf( $format, $attr, $name, $slug, $html_class, $content );
     }
 
     public function addJs() {
+        if ( wp_script_is( 'ajax-template-part', 'queue' ) ) {
+            return;
+        }
         $args = [ 'ajax-template-part', $this->getJsUrl(), [ 'jquery' ], $this->getJsVer(), TRUE ];
         call_user_func_array( 'wp_enqueue_script', $args );
-        $ajax_url = apply_filter( 'ajax_template_ajax_url', admin_url( 'admin-ajax.php' ) );
+        $ajax_url = apply_filters( 'ajax_template_ajax_url', admin_url( 'admin-ajax.php' ) );
         $data = [
             'info' => [ 'ajax_url' => $ajax_url, 'query_data' => $this->wp->query_vars ]
         ];
