@@ -53,7 +53,7 @@ class StashHandler implements HandlerInterface {
         return call_user_func( [ get_class( $this->getStash()->getDriver() ), 'isAvailable' ] );
     }
 
-    private function getStash() {
+    public function getStash() {
         return $this->stash;
     }
 
