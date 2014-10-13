@@ -35,7 +35,7 @@ register_activation_hook( __FILE__, function() {
 } );
 
 
-if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
     return;
 }
 
@@ -45,7 +45,7 @@ if ( file_exists( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' ) ) {
 }
 
 
-if ( ! defined( 'DOING_AJAX' ) ) {
+if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 
     if ( ! function_exists( 'ajax_template_part' ) ) {
 
@@ -60,12 +60,6 @@ if ( ! defined( 'DOING_AJAX' ) ) {
 
 $nopriv = is_user_logged_in() ? '' : 'nopriv_';
 add_action( "wp_ajax_{$nopriv}ajaxtemplatepart", function() {
-
-    static $count = 0;
-    if ( $count > 0 ) {
-        exit();
-    }
-    $count ++;
 
     $loader = new GM\ATP\Loader();
     $cache_provider = new GM\ATP\Cache\Provider();
