@@ -26,24 +26,19 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+if ( file_exists( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' ) ) {
+    require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+}
+
 register_activation_hook( __FILE__, function() {
-    if ( file_exists( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' ) ) {
-        require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
-    }
-    $filestystem = new GM\ATP\FileSystem;
-    $filestystem->getFolder();
+    $container = new GM\ATP\get_container();
+    $container[ 'filesystem' ]->getFolder();
 } );
 
 
 if ( is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
     return;
 }
-
-
-if ( file_exists( plugin_dir_path( __FILE__ ) . 'vendor/autoload.php' ) ) {
-    require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
-}
-
 
 if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 
@@ -58,46 +53,5 @@ if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
     return;
 }
 
-function atp_ajax_callback() {
-    $loader = new GM\ATP\Loader();
-    $cache_provider = new GM\ATP\Cache\Provider();
-
-    // no caching: when WP_DEBUG is true, but can be filtered via `"ajax_template_cache"`
-    if ( ! $cache_provider->isEnabled() ) {
-        $loader->getData();
-        exit();
-    }
-
-    // custom object cache already installed: use that
-    $transient = new GM\ATP\Cache\TransientHandler();
-    if ( $transient->isAvailable() ) {
-        $cache_provider->setHandler( $transient );
-        $loader->setCacheProvider( $cache_provider );
-        $loader->getData();
-        exit();
-    }
-    unset( $transient );
-
-    // let's use Stash and let users choose a driver via
-    // `"ajax_template_cache_driver"` and `"ajax_template_{$driver}_driver_conf"` filter hooks.
-    // FileSystem driver by default
-    $picker = new GM\ATP\Cache\StashDriverPicker( new GM\ATP\FileSystem );
-    $driver_class = $picker->getDriverClass();
-    if ( class_exists( $driver_class ) ) {
-        $driver = new $driver_class;
-    }
-    $options = $picker->getDriverOptions( $driver_class );
-    if ( $picker->checkDriver( $driver, $options ) ) {
-        $handler = new GM\ATP\Cache\StashHandler( new Stash\Pool( $driver ) );
-        $cache_provider->setHandler( $handler );
-        $loader->setCacheProvider( $cache_provider );
-    }
-    $loader->getData();
-
-    exit();
-}
-
-add_action( "wp_ajax_ajaxtemplatepart", 'atp_ajax_callback' );
-add_action( "wp_ajax_nopriv_ajaxtemplatepart", 'atp_ajax_callback' );
-
-
+add_action( "wp_ajax_ajaxtemplatepart", 'GM\ATP\ajax_callback' );
+add_action( "wp_ajax_nopriv_ajaxtemplatepart", 'GM\ATP\ajax_callback' );
