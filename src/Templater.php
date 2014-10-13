@@ -2,27 +2,10 @@
 
 class Templater {
 
-    private static $templater = NULL;
     private $wp;
     private $query;
     private $path;
     private $debug;
-
-    public static function tag( $name, $slug, $content = '' ) {
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            return get_template_part( $name, $slug );
-        }
-        if ( is_admin() || ! is_string( $name ) || ! is_string( $slug ) ) {
-            return;
-        }
-        if ( is_null( self::$templater ) ) {
-            $class = get_called_class();
-            $path = dirname( dirname( __FILE__ ) ) . '/ajax-template-part.php';
-            self::$templater = new $class( $GLOBALS[ 'wp' ], $GLOBALS[ 'wp_query' ], $path );
-            self::$templater->addJs();
-        }
-        self::$templater->addHtml( sanitize_title( $name ), sanitize_title( $slug ), $content );
-    }
 
     public function __construct( \WP $wp, \WP_Query $query, $path ) {
         $this->wp = $wp;

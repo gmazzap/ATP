@@ -22,6 +22,16 @@ function deactivate() {
     }
 }
 
+function template_part( $name, $slug = '', $content = '' ) {
+    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        return \get_template_part( $name, $slug );
+    }
+    $container = get_container();
+    $templater = $container[ 'templater' ];
+    $templater->addJs();
+    $templater->addHtml( sanitize_title( $name ), sanitize_title( $slug ), $content );
+}
+
 function ajax_callback() {
     $cont = get_container();
     $loader = $cont[ 'loader' ];

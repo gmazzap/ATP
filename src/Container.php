@@ -14,6 +14,10 @@ class Container extends Pimple {
             'loader'        => function() {
                 return new Loader;
             },
+            'templater' => function( ) {
+                $path = dirname( dirname( __FILE__ ) ) . '/ajax-template-part.php';
+                return new Templater( $GLOBALS[ 'wp' ], $GLOBALS[ 'wp_query' ], $path );
+            },
             'filesystem' => function() {
                 return new FileSystem;
             },

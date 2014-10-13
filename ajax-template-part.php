@@ -40,7 +40,7 @@ add_action( "wp_ajax_nopriv_ajaxtemplatepart", ' GM\ATP\ajax_callback' );
 if ( ! function_exists( 'ajax_template_part' ) ) {
 
     function ajax_template_part( $name, $slug = '' ) {
-        GM\ATP\Templater::tag( $name, $slug );
+        GM\ATP\template_part( $name, $slug );
     }
 
 }
@@ -48,7 +48,7 @@ if ( ! function_exists( 'ajax_template_part' ) ) {
 if ( ! function_exists( 'ajax_template_part_content' ) ) {
 
     function ajax_template_part_content( $content, $name, $slug = '' ) {
-        GM\ATP\Templater::tag( $name, $slug, $content );
+        GM\ATP\template_part( $name, $slug, $content );
     }
 
 }
