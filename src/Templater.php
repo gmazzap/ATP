@@ -34,15 +34,20 @@ class Templater {
         $html_class = $content = '';
         $name = esc_attr( filter_var( $raw_name, FILTER_SANITIZE_URL ) );
         $slug = esc_attr( filter_var( $raw_slug, FILTER_SANITIZE_URL ) );
+        global $post;
         $attr = ' style="display:none!important;"';
+        $post_attr = '';
+        if ( $post instanceof \WP_Post ) {
+            $post_attr = sprintf( ' data-post="%s"', $post->ID );
+        }
         if ( apply_filters( 'ajax_template_show_loading', FALSE, $name, $slug, $this->query ) ) {
             $html_class = $this->getHtmlClass( $name, $slug );
             $content = $this->getHtmlContent( $name, $slug );
             $attr = '';
         }
         $attr .= " id=\"ajaxtemplate-{$name}-{$slug}-{$n}\"";
-        $format = '<span%s data-ajaxtemplatename="%s" data-ajaxtemplateslug="%s"%s>%s</span>';
-        printf( $format, $attr, $name, $slug, $html_class, $content );
+        $format = '<span%s%s data-ajaxtemplatename="%s" data-ajaxtemplateslug="%s"%s>%s</span>';
+        printf( $format, $attr, $post_attr, $name, $slug, $html_class, $content );
     }
 
     public function addJs() {

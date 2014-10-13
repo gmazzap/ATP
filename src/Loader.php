@@ -6,13 +6,14 @@ class Loader {
     private $output;
     private $query_data;
     private $templates_data;
+    private $posts_data;
 
     public function getData() {
         if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
             return;
         }
         $this->parseRequest();
-        if ( empty( $this->query_data ) || empty( $this->templates_data ) ) {
+        if ( empty( $this->templates_data ) ) {
             wp_send_json_error();
         }
         $this->getCache();
@@ -33,11 +34,14 @@ class Loader {
     private function parseRequest() {
         $request = filter_input_array( INPUT_POST, [
             'files_data' => [ 'filter' => FILTER_UNSAFE_RAW, 'flags' => FILTER_REQUIRE_ARRAY ],
-            'query_data' => [ 'filter' => FILTER_UNSAFE_RAW, 'flags' => FILTER_REQUIRE_ARRAY ]
+            'query_data' => [ 'filter' => FILTER_UNSAFE_RAW, 'flags' => FILTER_REQUIRE_ARRAY ],
+            'posts_data' => [ 'filter' => FILTER_SANITIZE_NUMBER_INT, 'flags' => FILTER_REQUIRE_ARRAY ]
             ] );
-        if ( ! empty( $request[ 'files_data' ] ) && ! empty( $request[ 'query_data' ] ) ) {
-            $this->query_data = $request[ 'query_data' ];
+        if ( ! empty( $request[ 'files_data' ] ) ) {
+            $this->query_data = $request[ 'query_data' ] ? : [ ];
             $this->templates_data = $request[ 'files_data' ];
+            $posts_data = array_filter( array_unique( $request[ 'posts_data' ] ) );
+            $this->posts_data = ( count( $posts_data ) > 1 ) ? $request[ 'posts_data' ] : [ ];
         }
     }
 
@@ -50,7 +54,7 @@ class Loader {
             }
             $data = $this->checkTemplateData( $template );
             if ( ! empty( $data ) ) {
-                $this->output[ $id ] = $this->loadTemplate( $data );
+                $this->output[ $id ] = $this->loadTemplate( $data, $id );
             }
         }
     }
@@ -79,15 +83,24 @@ class Loader {
         return array_filter( $args );
     }
 
-    private function loadTemplate( $args ) {
+    private function loadTemplate( $args, $id ) {
+        if ( isset( $this->posts_data[ $id ] ) && (int) $this->posts_data[ $id ] > 0 ) {
+            $GLOBALS[ 'post' ] = get_post( $this->posts_data[ $id ] );
+            setup_postdata( $GLOBALS[ 'post' ] );
+        }
         ob_start();
         @call_user_func_array( 'get_template_part', $args );
-        return ob_get_clean();
+        $result = ob_get_clean();
+        wp_reset_postdata();
+        return $result;
     }
 
     private function getCache() {
         if ( ! $this->shouldCache() ) {
             return;
+        }
+        if ( ! empty( $this->posts_data ) ) {
+            $this->query_data[ 'posts_data' ] = $this->posts_data;
         }
         $cached = $this->getCacheProvider()->get( $this->templates_data, $this->query_data );
         if ( ! empty( $cached ) && is_array( $cached ) ) {

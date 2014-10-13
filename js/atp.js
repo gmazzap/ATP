@@ -1,7 +1,7 @@
 (function ($, ATP) {
 
     ATP.methods = {};
-    ATP.map = {ids: [], spans: {}, slugs: {}};
+    ATP.map = {ids: [], spans: {}, slugs: {}, posts: {}};
 
     ATP.methods.checkResponse = function (response) {
         return typeof response.success !== 'undefined'
@@ -37,7 +37,8 @@
             data: {
                 action: 'ajaxtemplatepart',
                 query_data: ATP.info.query_data,
-                files_data: ATP.map.slugs
+                files_data: ATP.map.slugs,
+                posts_data: ATP.map.posts
             }
         });
     };
@@ -48,13 +49,18 @@
             var id = $el.attr('id');
             var name = $el.data('ajaxtemplatename');
             var slug = $el.data('ajaxtemplateslug');
+            var post = $el.data('post');
             if (typeof id === 'string' && id !== '' && typeof name === 'string' && name !== '') {
                 if (typeof slug !== 'string') {
                     slug = false;
                 }
+                if (Number(post) <= 0) {
+                    post = false;
+                }
                 ATP.map.ids.push(id);
                 ATP.map.spans[id] = $el;
                 ATP.map.slugs[id] = [name, slug];
+                ATP.map.posts[id] = post;
             }
             $el.data('ajaxtemplatename', null);
             $el.data('ajaxtemplateslug', null);
@@ -82,7 +88,7 @@
     });
 
     $(document).on('ajax_template_part_done', function () {
-        ATP.map = {ids: [], spans: {}, slugs: {}};
+        ATP.map = {ids: [], spans: {}, slugs: {}, posts: {}};
     });
 
 })(jQuery, AjaxTemplatePartData);
