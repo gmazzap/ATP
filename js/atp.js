@@ -1,7 +1,7 @@
 (function ($, ATP) {
 
     ATP.methods = {};
-    ATP.map = {spans: [], slugs: []};
+    ATP.map = {ids: [], spans: {}, slugs: {}};
 
     ATP.methods.checkResponse = function (response) {
         return typeof response.success !== 'undefined'
@@ -10,8 +10,8 @@
     };
 
     ATP.methods.onError = function () {
-        $(ATP.map.spans).each(function (id, $el) {
-            $el.remove();
+        $(ATP.map.ids).each(function (id, el) {
+            $('#' + el).remove();
         });
         $(document).trigger('ajax_template_part_error', ATP.map);
         $(document).trigger('ajax_template_part_done');
@@ -19,9 +19,10 @@
     };
 
     ATP.methods.onSuccess = function (data) {
-        $(ATP.map.spans).each(function (id, $el) {
-            if (typeof data[id] === 'string') {
-                $el.replace(data[id]);
+        $.each(ATP.map.ids, function (id, el) {
+            var $el = $('#' + el);
+            if ($el.length && typeof data[el] === 'string') {
+                $el.replaceWith(data[el]).show();
             }
         });
         $(document).trigger('ajax_template_part_success', ATP.map);
@@ -44,13 +45,14 @@
     ATP.methods.parseDom = function () {
         $('span[data-ajaxtemplatename]').each(function (i, el) {
             var $el = $(el);
-            var id = $(el).attr('id');
+            var id = $el.attr('id');
             var name = $el.data('ajaxtemplatename');
             var slug = $el.data('ajaxtemplateslug');
             if (typeof id === 'string' && id !== '' && typeof name === 'string' && name !== '') {
                 if (typeof slug !== 'string') {
                     slug = false;
                 }
+                ATP.map.ids.push(id);
                 ATP.map.spans[id] = $el;
                 ATP.map.slugs[id] = [name, slug];
             }
@@ -60,7 +62,7 @@
     };
 
     ATP.methods.update = function () {
-        if (ATP.map.spans.length < 1 || ATP.map.spans.length !== ATP.map.slugs.length) {
+        if (ATP.map.ids.length < 1) {
             return false;
         }
         ATP.methods.callAjax().done(function (response) {
@@ -80,7 +82,7 @@
     });
 
     $(document).on('ajax_template_part_done', function () {
-        ATP.map = {spans: [], slugs: []};
+        ATP.map = {ids: [], spans: {}, slugs: {}};
     });
 
 })(jQuery, AjaxTemplatePartData);
