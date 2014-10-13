@@ -62,7 +62,7 @@ function atp_ajax_callback() {
     $loader = new GM\ATP\Loader();
     $cache_provider = new GM\ATP\Cache\Provider();
 
-    // no caching
+    // no caching: when WP_DEBUG is true, but can be filtered via `"ajax_template_cache"`
     if ( ! $cache_provider->isEnabled() ) {
         $loader->getData();
         exit();
