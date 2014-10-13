@@ -39,7 +39,7 @@ class StashDriverPicker {
     }
 
     public function checkDriver( $driver = NULL, $options = NULL ) {
-        if ( ! is_array( $options ) || $driver instanceof DriverInterface ) {
+        if ( ! is_array( $options ) || ! $driver instanceof DriverInterface ) {
             return FALSE;
         }
         if ( ! call_user_func( [ get_class( $driver ), 'isAvailable' ] ) ) {
