@@ -58,9 +58,7 @@ if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
     return;
 }
 
-$nopriv = is_user_logged_in() ? '' : 'nopriv_';
-add_action( "wp_ajax_{$nopriv}ajaxtemplatepart", function() {
-
+function atp_ajax_callback() {
     $loader = new GM\ATP\Loader();
     $cache_provider = new GM\ATP\Cache\Provider();
 
@@ -97,7 +95,9 @@ add_action( "wp_ajax_{$nopriv}ajaxtemplatepart", function() {
     $loader->getData();
 
     exit();
-} );
+}
 
+add_action( "wp_ajax_ajaxtemplatepart", 'atp_ajax_callback' );
+add_action( "wp_ajax_nopriv_ajaxtemplatepart", 'atp_ajax_callback' );
 
 
