@@ -1,6 +1,6 @@
 <?php namespace GM\ATP\Cache;
 
-use Stash\PoolInterface;
+use Stash\Interfaces\PoolInterface;
 
 class StashHandler implements HandlerInterface {
 
@@ -50,7 +50,7 @@ class StashHandler implements HandlerInterface {
     }
 
     public function isAvailable() {
-        return call_user_func( get_class( $this->getStash()->getDriver() ), 'isAvailable' );
+        return call_user_func( [ get_class( $this->getStash()->getDriver() ), 'isAvailable' ] );
     }
 
     private function getStash() {
@@ -59,7 +59,7 @@ class StashHandler implements HandlerInterface {
 
     private function getItem( $key ) {
         try {
-            return $this->getPool()->getItem( $key );
+            return $this->getStash()->getItem( $key );
         } catch ( \Exception $e ) {
             return $e;
         }
