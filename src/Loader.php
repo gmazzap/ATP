@@ -91,7 +91,6 @@ class Loader {
         ob_start();
         @call_user_func_array( 'get_template_part', $args );
         $result = ob_get_clean();
-        wp_reset_postdata();
         return $result;
     }
 
