@@ -15,7 +15,7 @@ class TransientHandler implements HandlerInterface {
     }
 
     public function isAvailable() {
-        return wp_using_ext_object_cache();
+        return apply_filters( 'ajax_template_force_transient', wp_using_ext_object_cache() );
     }
 
 }
