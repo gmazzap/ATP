@@ -1,5 +1,5 @@
-ajax_template_part()
-====================
+ajax_template_part
+==================
 
 This plugin adds **`ajax_template_part()`** function to WordPress.
 
