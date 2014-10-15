@@ -9,7 +9,7 @@
  */
 
 /*
-  Copyright (C) 2014 Giuseppe
+  Copyright (C) 2014 Giuseppe Mazzapica
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
