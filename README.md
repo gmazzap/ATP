@@ -10,7 +10,7 @@ but **ajax powered**.
 
 When files containing `ajax_template_part()` calls are loaded by WordPress, required
 templates are **not** loaded immediately, only when entire page is loaded, an ajax request is sent to
-server to get all the templates required, and then related is content is *pushed* in right place.
+server to get all the templates required, and related content is *pushed* in right place.
 
 # First question is:
 
@@ -23,22 +23,21 @@ server to get all the templates required, and then related is content is *pushed
 ### 1. Quick response
 
 Templates may require *some* time to be rendered. Let's imagine a `loop.php` template
-that shows a set of posts, each containing a shortcode that render *things* dynamically.
+that shows a set of posts, each containing a shortcode that renders *things* dynamically.
 Requiring that template using *standard* way will slow down page loading. However, sometimes
 may be desirable to give a quick response to user that *lands* to the page and *defer* the loading
 of slow things (maybe showing a loading UI).
 
-That is possibly more useful to render "secondary" contents:
-e.g. load a post content as soon as possible, while a sidebar or a footer with related posts and
-stuff alike are loaded via ajax in meanwhile.
+That is possibly more useful to render "secondary" contents: e.g. load a post content as soon as possible,
+while a section with related posts, ads or stuff alike are loaded via ajax in meanwhile.
 
 ### 2. Cache
 
 `ajax_template_part()` embed a powerful cache system: *all* the contents loaded via ajax
 are cached. That means that using this single, core-alike function is possible to implement
-a *deferred* fragment cache system, without having to change existing code, use additional libraries
-or setup anything.
-More on this plugin cache system [later in this page](#cache).
+a *deferred* fragment cache system, without having to change existing code, to use additional libraries
+or to setup anything.
+More on plugin cache system [later in this page](#cache).
 
 ----
 
@@ -93,8 +92,9 @@ it will load via ajax the first that exists among, in order:
 
 ## Show content while loading
 
-By default there the function is called nothing appear until the template is not loaded.
-However is possible to show *something*: a spinner image, a loading message, default text..
+By default, where the function is called inside containing template, nothing appear until the
+ajax template is not loaded.
+However, is possible to show *something*: a spinner image, a loading message, default text..
 
 That can be done in 2 ways:
 
@@ -120,7 +120,7 @@ whatever is passed as 1st argument is shown as temporary content, the other 2 ar
 of `ajax_template_part()`.
 Note that content passed to this function is not filtered using `"ajax_template_loading_content"` hook.
 
-## Temporary content container class
+## Temporary container class
 
 When a temporary content is set, via filter or using `ajax_template_part_content()`, it is added wrapped
 inside a `<div>` tag. Is possible to set HTML class attribute for this container using
@@ -135,10 +135,33 @@ added via this filter.
 
 ## Nested calls
 
-If in template loaded using `ajax_template_part()` there are additional calls to same function
-*nested* templates are loaded as expected, and in the same ajax requests: don't expect
-*another* ajax request triggered when first ajax-required template as been loaded.
+If in template loaded using `ajax_template_part()` there are additional calls to same function,
+*nested* templates are loaded as expected, and in the same ajax request: don't expect
+*another* ajax request triggered when *parent* ajax-required template as been loaded.
 That applies in the exact manner to any `get_template_part()` call inside ajax loaded templates.
+
+## Stay safe
+
+To put `ajax_template_part()` calls in your templates makes your site *require* this plugin is
+installed, and active, otherwise you'll get fatal error because of function not declared.
+To avoid such problems, e.g. if you deactivate plugin by accident, can be a good idea put this on top
+of your `functions.php`:
+
+``` php
+if ( ! function_exists( 'ajax_template_part' ) ) {
+  function ajax_template_part( $name = '', $slug = '' ) {
+    return get_template_part( $name, $slug );
+  }
+}
+if ( ! function_exists( 'ajax_template_part_content' ) ) {
+  function ajax_template_part_content( $content = '', $name = '', $slug = '' ) {
+    return get_template_part( $name, $slug );
+  }
+}
+```
+
+In this way your theme will *gracefully degrade* to `get_template_part` if plugin is not active for
+any reason.
 
 ----
 
@@ -155,8 +178,8 @@ a boolean: `TRUE` means cache active.
 
 This plugin can work with different types of caches:
 
-- if in the system is installed an advanced object cache, then plugin will use that, nothing is left to do.
-- if no external object cache is in use, plugin uses [Stash](http://www.stashphp.com) to cache data.
+- if in the system is installed an external object cache, then this plugin will use that, nothing is left to do.
+- if no external object cache is in use, this plugin uses [Stash](http://www.stashphp.com) to cache data.
 This library can make use of different "drivers": FileSystem, APC, Memcached, Redis...
 By default plugin uses FileSystem driver and *no* configuration is required to use that.
 However is possible to use any supported driver, if system has the requirements.
@@ -165,8 +188,8 @@ However is possible to use any supported driver, if system has the requirements.
 
 To use a different driver there are 2 filters available:
 
-- **`"ajax_template_cache_driver"`**: hooking callback must return the
-fully qualified name of the class to use, one of:
+- **`"ajax_template_cache_driver"`**: hooking callback must return the fully qualified name
+of the class to use, one among:
    - `Stash\Driver\Sqlite`
    - `Stash\Driver\Memcache`
    - `Stash\Driver\APC`
@@ -193,10 +216,11 @@ fully qualified name of the class to use, one of:
 ## Cache expiration
 
 By default contents are cached for 1 hour. Consider that if content (e.g. posts) is updated
-and the old content is cached, updated content will not be shown until cache expiries.
+and the old content is cached, updated content will not be shown until cache expires.
 
 Is possible to change default expiration time using `"ajax_template_cache_ttl"` filter hook.
 Hooking callbacks receives and have to return cache "time to live" value in seconds.
 Note that setting a value under 30 seconds will be skipped and default will be used.
-If you need to disable caching use `"ajax_template_cache"` hook or set `WP_DEBUG` to true
-(not recommended for production, highly recommended for development).
+
+If you need to disable cache don't use this filter but `"ajax_template_cache"` or set `WP_DEBUG` to true
+(not recommended for production, highly recommended for development environments).
