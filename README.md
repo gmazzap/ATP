@@ -123,11 +123,15 @@ Note that content passed to this function is not filtered using `"ajax_template_
 ## Temporary container class
 
 When a temporary content is set, via filter or using `ajax_template_part_content()`, it is added wrapped
-inside a `<div>` tag. Is possible to set HTML class attribute for this container using
+inside a `<div>` tag.
+
+Is possible to set HTML class attribute for this container using
 **`"ajax_template_loading_class"`** filter hook.
+
 Callbacks hooking this filter receive same 4 arguments passed by `"ajax_template_loading_content"`.
+
 Note that `<div>` container is always added to page, even when no temporary content is used, but
-by default it is hidden using in-line CSS style, but using `"ajax_template_loading_class"` filter, is
+by default it is hidden using in-line CSS, but using `"ajax_template_loading_class"` filter, is
 possible to add classes to the `<div>` and so be able to style it via CSS: among other things is possible
 to use a *loader image* by setting it as background image CSS property of a class
 added via this filter.
@@ -138,12 +142,14 @@ added via this filter.
 If in template loaded using `ajax_template_part()` there are additional calls to same function,
 *nested* templates are loaded as expected, and in the same ajax request: don't expect
 *another* ajax request triggered when *parent* ajax-required template as been loaded.
+
 That applies in the exact manner to any `get_template_part()` call inside ajax loaded templates.
 
 ## Stay safe
 
 To put `ajax_template_part()` calls in your templates makes your site *require* this plugin is
 installed, and active, otherwise you'll get fatal error because of function not declared.
+
 To avoid such problems, e.g. if you deactivate plugin by accident, can be a good idea put this on top
 of your `functions.php`:
 
@@ -190,20 +196,20 @@ To use a different driver there are 2 filters available:
 
 - **`"ajax_template_cache_driver"`**: hooking callback must return the fully qualified name
 of the class to use, one among:
-   - `Stash\Driver\Sqlite`
-   - `Stash\Driver\Memcache`
-   - `Stash\Driver\APC`
-   - `Stash\Driver\Redis`
-   - `Stash\Driver\Composite`
+  - `Stash\Driver\Sqlite`
+  - `Stash\Driver\Memcache`
+  - `Stash\Driver\APC`
+  - `Stash\Driver\Redis`
+  - `Stash\Driver\Composite`
 
  please refer to [Stash documentation](http://www.stashphp.com/Drivers.html) for details.
 
- - **`"ajax_template_{$driver}_driver_conf"`** is the filter to be used to configure the chosen driver.
+- **`"ajax_template_{$driver}_driver_conf"`** is the filter to be used to configure the chosen driver.
  Hooking callback must return the configuration array, see Stash documentation for details.
 
  As example, configuration to use Memcache driver should be something like this:
 
-```php
+ ```php
  add_filter( 'ajax_template_cache_driver', function() {
    return '\Stash\Driver\Memcache';
  });
