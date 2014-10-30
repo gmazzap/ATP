@@ -230,3 +230,9 @@ Note that setting a value under 30 seconds will be skipped and default will be u
 
 If you need to disable cache don't use this filter but `"ajax_template_cache"` or set `WP_DEBUG` to true
 (not recommended for production, highly recommended for development environments).
+
+---------
+
+#License
+
+This plugin is released under MIT license.
