@@ -54,7 +54,7 @@ More on plugin cache system [later in this page](#cache).
 The plugin is a Composer package and can be installed in plugin directory via:
 
 ``` bash
-composer create-project giuseppe-mazzapica/ajax-template-part --no-dev
+composer create-project gmazzap/ajax-template-part --no-dev
 ```
 
 

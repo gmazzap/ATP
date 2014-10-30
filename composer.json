@@ -1,5 +1,5 @@
 {
-    "name": "giuseppe-mazzapica/ajax-template-part",
+    "name": "gmazzap/ajax-template-part",
     "description": "Like get_template_part(), but AJAX powered",
     "keywords": ["wordpress", "ajax"],
     "type": "wordpress-plugin",
@@ -15,7 +15,7 @@
         "issues": "https://github.com/Giuseppe-Mazzapica/ATP/issues",
         "source": "https://github.com/Giuseppe-Mazzapica/ATP"
     },
-    "license": "GPL-2.0+",
+    "license": "MIT",
     "require": {
         "php": ">=5.4",
         "pimple/pimple": "~3.0",
