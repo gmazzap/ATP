@@ -1,41 +1,46 @@
 <?php namespace GM\ATP;
 
-function get_container( $values = [ ] ) {
+function get_container($values = [])
+{
     static $container = NULL;
-    if ( is_null( $container ) ) {
-        $container = new Container( $values );
+    if (is_null($container)) {
+        $container = new Container($values);
     }
     return $container;
 }
 
-function activate() {
+function activate()
+{
     $container = get_container();
-    $container[ 'filesystem' ]->getFolder();
-    wp_schedule_event( time(), 'daily', 'ajaxtemplatepart_cache_purge' );
+    $container['filesystem']->getFolder();
+    wp_schedule_event(time(), 'daily', 'ajaxtemplatepart_cache_purge');
 }
 
-function deactivate() {
+function deactivate()
+{
     $container = get_container();
-    $stash = $container[ 'cache.stash' ];
-    if ( $stash instanceof \Stash\Pool ) {
+    $stash = $container['cache.stash'];
+    if ($stash instanceof \Stash\Pool) {
         $stash->flush();
     }
 }
 
-function template_part( $name, $slug = '', $content = '' ) {
-    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-        return \get_template_part( $name, $slug );
+function template_part($name, $slug = '', $content = '')
+{
+    if (defined('DOING_AJAX') && DOING_AJAX) {
+        return \get_template_part($name, $slug);
     }
     $container = get_container();
-    $templater = $container[ 'templater' ];
+    $templater = $container['templater'];
     $templater->addJs();
-    $templater->addHtml( sanitize_title( $name ), sanitize_title( $slug ), $content );
+    $templater->addHtml($name, $slug, $content);
 }
 
-function ajax_callback() {
+function ajax_callback()
+{
     $cont = get_container();
-    $loader = $cont[ 'loader' ];
-    $provider = $cont[ 'cache.provider' ];
+    $loader = $cont['loader'];
+    $provider = $cont['cache.provider'];
 
     /**
      * No caching when WP_DEBUG is true, but can be filtered via "ajax_template_cache" hook.
@@ -43,9 +48,9 @@ function ajax_callback() {
      * use Stash, by default with FileSystem driver, but driver and its options can be customized
      * via "ajax_template_cache_driver" and "ajax_template_{$driver}_driver_conf" filter hooks.
      */
-    if ( $provider->isEnabled() && $cont[ 'cache.handler' ] instanceof Cache\HandlerInterface ) {
-        $provider->setHandler( $cont[ 'cache.handler' ] );
-        $loader->setCacheProvider( $provider );
+    if ($provider->isEnabled() && $cont['cache.handler'] instanceof Cache\HandlerInterface) {
+        $provider->setHandler($cont['cache.handler']);
+        $loader->setCacheProvider($provider);
     }
 
     $loader->getData();
@@ -53,10 +58,11 @@ function ajax_callback() {
     exit();
 }
 
-function cache_purge() {
+function cache_purge()
+{
     $container = get_container();
-    $handler = $container[ 'cache.handler' ];
-    if ( $handler instanceof Cache\StashHandler ) {
+    $handler = $container['cache.handler'];
+    if ($handler instanceof Cache\StashHandler) {
         $handler->getStash()->purge();
     }
 }

@@ -46,11 +46,13 @@
     };
 
     ATP.methods.parseDom = function () {
-        $('span[data-ajaxtemplatename]').each(function (i, el) {
+        $('span[data-ajaxtemplate]').each(function (i, el) {
             var $el = $(el);
             var id = $el.attr('id');
-            var name = $el.data('ajaxtemplatename');
-            var slug = $el.data('ajaxtemplateslug');
+            var rawdata = decodeURIComponent($el.data('ajaxtemplate').replace(/\+/g, ' '));
+            var templateData = $.parseJSON(rawdata);
+            var name = templateData.name;
+            var slug = templateData.slug;
             var post = $el.data('post');
             if (typeof id === 'string' && id !== '' && typeof name === 'string' && name !== '') {
                 if (typeof slug !== 'string') {
@@ -64,8 +66,7 @@
                 ATP.map.slugs[id] = [name, slug];
                 ATP.map.posts[id] = post;
             }
-            $el.data('ajaxtemplatename', null);
-            $el.data('ajaxtemplateslug', null);
+            $el.data('ajaxtemplate', null);
         });
     };
 
@@ -94,4 +95,3 @@
     });
 
 })(jQuery, AjaxTemplatePartData);
-

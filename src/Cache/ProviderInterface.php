@@ -1,10 +1,11 @@
 <?php namespace GM\ATP\Cache;
 
-interface ProviderInterface {
+interface ProviderInterface
+{
 
-    public function get( Array $id1, Array $id2 );
+    public function get(Array $id1, Array $id2);
 
-    public function set( Array $value, Array $id1, Array $id2 );
+    public function set(Array $value, Array $id1, Array $id2);
 
     /**
      * @return bool
@@ -24,5 +25,5 @@ interface ProviderInterface {
     /**
      * @param \GM\ATP\Cache\HandlerInterface $handler
      */
-    public function setHandler( HandlerInterface $handler );
+    public function setHandler(HandlerInterface $handler);
 }

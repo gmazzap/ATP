@@ -1,12 +1,13 @@
 <?php namespace GM\ATP\Cache;
 
-interface HandlerInterface {
+interface HandlerInterface
+{
 
-    public function get( $key );
+    public function get($key);
 
-    public function set( $key, $value, $expiration );
+    public function set($key, $value, $expiration);
 
-    public function clear( $key );
+    public function clear($key);
 
     public function isAvailable();
 }

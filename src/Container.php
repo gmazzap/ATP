@@ -5,9 +5,11 @@ use Stash\Interfaces\DriverInterface;
 use Stash\Pool as Stash;
 use Stash\DriverList;
 
-class Container extends Pimple {
+class Container extends Pimple
+{
 
-    function __construct( Array $values = [ ] ) {
+    function __construct(Array $values = [])
+    {
 
         $defaults = [
             'stash.drivers' => DriverList::getAvailableDrivers(),
@@ -15,8 +17,8 @@ class Container extends Pimple {
                 return new Loader;
             },
             'templater' => function() {
-                $path = dirname( dirname( __FILE__ ) ) . '/ajax-template-part.php';
-                return new Templater( $GLOBALS[ 'wp' ], $GLOBALS[ 'wp_query' ], $path );
+                $path = dirname(dirname(__FILE__)).'/ajax-template-part.php';
+                return new Templater($GLOBALS['wp'], $GLOBALS['wp_query'], $path);
             },
             'filesystem' => function() {
                 return new FileSystem;
@@ -25,36 +27,36 @@ class Container extends Pimple {
                 return new Cache\Provider;
             },
             'cache.driverpicker' => function($c) {
-                return new Cache\StashDriverPicker( $c[ 'filesystem' ], $c[ 'stash.drivers' ] );
+                return new Cache\StashDriverPicker($c['filesystem'], $c['stash.drivers']);
             },
             'cache.stash' => function($c) {
-                $class = '\\' . ltrim( $c[ 'cache.driverpicker' ]->getDriverClass(), '\\' );
-                if ( ! class_exists( $class ) ) {
+                $class = '\\'.ltrim($c['cache.driverpicker']->getDriverClass(), '\\');
+                if ( ! class_exists($class)) {
                     return;
                 }
                 $driver = new $class;
-                if ( $driver instanceof DriverInterface ) {
-                    $options = $c[ 'cache.driverpicker' ]->getDriverOptions( $class );
-                    $driver->setOptions( $options );
-                    return new Stash( $driver );
+                if ($driver instanceof DriverInterface) {
+                    $options = $c['cache.driverpicker']->getDriverOptions($class);
+                    $driver->setOptions($options);
+                    return new Stash($driver);
                 }
             },
             'cache.handlers.transient' => function() {
                 return new Cache\TransientHandler;
             },
             'cache.handlers.stash' => function($c) {
-                if ( ! empty( $c[ 'cache.stash' ] ) ) {
-                    return new Cache\StashHandler( $c[ 'cache.stash' ] );
+                if ( ! empty($c['cache.stash'])) {
+                    return new Cache\StashHandler($c['cache.stash']);
                 }
             },
             'cache.handler' => function($c) {
-                return $c[ 'cache.handlers.transient' ]->isAvailable() ?
-                    $c[ 'cache.handlers.transient' ] :
-                    $c[ 'cache.handlers.stash' ];
+                return $c['cache.handlers.transient']->isAvailable() ?
+                    $c['cache.handlers.transient'] :
+                    $c['cache.handlers.stash'];
             }
         ];
 
-        parent::__construct( array_merge( $defaults, $values ) );
+        parent::__construct(array_merge($defaults, $values));
     }
 
 }
