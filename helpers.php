@@ -10,17 +10,20 @@
 
 namespace GM\ATP;
 
+use Pimple\Container;
+
 /**
- * Instantiate a container instance.
+ * Instantiate a container instance and add the service provider.
  *
- * @param array $values
  * @return \GM\ATP\Container
  */
-function get_container($values = [])
+function get_container()
 {
     static $container = null;
+
     if (is_null($container)) {
-        $container = new Container($values);
+        $container = new Container();
+        $container->register(new ServiceProvider());
     }
 
     return $container;
@@ -69,7 +72,7 @@ function template_part($name, $slug = '', $content = '')
  */
 function ajax_callback()
 {
-    if (! defined('DOING_AJAX') || ! DOING_AJAX) {
+    if ( ! defined('DOING_AJAX') || ! DOING_AJAX) {
         return;
     }
 
