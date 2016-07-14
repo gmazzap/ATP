@@ -1,34 +1,41 @@
 {
-    "name": "gmazzap/ajax-template-part",
-    "description": "Like get_template_part(), but AJAX powered",
-    "keywords": ["wordpress", "ajax"],
-    "type": "wordpress-plugin",
-    "authors": [
+    "name":        "gmazzap/ajax-template-part",
+    "description": "Like get_template_part(), but AJAX powered.",
+    "license":     "MIT",
+    "type":        "wordpress-plugin",
+    "keywords":    [
+        "wordpress",
+        "wordpress plugin",
+        "template",
+        "template partials",
+        "ajax"
+    ],
+    "authors":     [
         {
-            "name": "Giuseppe Mazzapica",
-            "email": "giuseppe.mazzapica@gmail.com",
-            "homepage": "http://gm.zoomlab.it",
-            "role": "Developer"
+            "name":     "Giuseppe Mazzapica",
+            "email":    "giuseppe.mazzapica@gmail.com",
+            "role":     "Developer"
         }
     ],
-    "support": {
+    "support":     {
         "issues": "https://github.com/Giuseppe-Mazzapica/ATP/issues",
         "source": "https://github.com/Giuseppe-Mazzapica/ATP"
     },
-    "license": "MIT",
-    "require": {
-        "php": ">=5.4",
-        "pimple/pimple": "~3.0",
+    "require":     {
+        "php":                 ">=5.4",
+        "pimple/pimple":       "~3.0",
         "composer/installers": "~1.0",
-        "tedivm/stash": "~0.14.0"
+        "tedivm/stash":        "~0.14.0"
     },
-    "autoload": {
+    "autoload":    {
         "psr-4": {
             "GM\\ATP\\": "src/"
         },
-        "files": ["helpers.php"]
+        "files": [
+            "helpers.php"
+        ]
     },
-    "config": {
+    "config":      {
         "optimize-autoloader": true
     }
 }
