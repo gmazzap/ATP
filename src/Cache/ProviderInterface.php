@@ -21,14 +21,14 @@ interface ProviderInterface
      * @param array $id1
      * @param array $id2
      */
-    public function get(Array $id1, Array $id2);
+    public function get(array $id1, array $id2);
 
     /**
      * @param array $value
      * @param array $id1
      * @param array $id2
      */
-    public function set(Array $value, Array $id1, Array $id2);
+    public function set(array $value, array $id1, array $id2);
 
     /**
      * @return bool

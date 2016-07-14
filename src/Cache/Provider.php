@@ -25,7 +25,7 @@ class Provider implements ProviderInterface
     /**
      * @var string
      */
-    private $key;
+    private $id;
 
     /**
      * @var int
@@ -53,9 +53,9 @@ class Provider implements ProviderInterface
      * @param  array $id2
      * @return mixed
      */
-    public function get(Array $id1, Array $id2)
+    public function get(array $id1, array $id2)
     {
-        $key = $this->getKey($id1, $id2);
+        $key = $this->id($id1, $id2);
 
         return $this->getHandler()->get($key);
     }
@@ -66,11 +66,11 @@ class Provider implements ProviderInterface
      * @param  array $id2
      * @return mixed
      */
-    public function set(Array $value, Array $id1, Array $id2)
+    public function set(array $value, array $id1, array $id2)
     {
-        $key = $this->getKey($id1, $id2);
+        $key = $this->id($id1, $id2);
 
-        return $this->getHandler()->set($key, $value, $this->getTtl());
+        return $this->getHandler()->set($key, $value, $this->ttl());
     }
 
     /**
@@ -96,33 +96,33 @@ class Provider implements ProviderInterface
     }
 
     /**
-     * @param  array  $id1
-     * @param  array  $id2
+     * @param  array $id1
+     * @param  array $id2
      * @return string
      */
-    private function getKey(Array $id1, Array $id2)
+    private function id(array $id1, array $id2)
     {
-        if (! is_null($this->key)) {
-            return $this->key;
+        if (! is_null($this->id)) {
+            return $this->id;
         }
 
         $a = array_filter($id1);
         $b = array_filter($id2);
         ksort($a);
         ksort($b);
-        $this->key = 'GM_ATP_'.md5(serialize($a).serialize($b));
+        $this->id = 'GM_ATP_'.md5(serialize($a).serialize($b));
 
-        return $this->key;
+        return $this->id;
     }
 
     /**
      * @return int
      */
-    private function getTtl()
+    private function ttl()
     {
         if (is_null($this->ttl)) {
             $ttl = apply_filters('ajax_template_cache_ttl', HOUR_IN_SECONDS);
-            $this->ttl = is_scalar($ttl) && (int) $ttl > 30 ? (int) $ttl : HOUR_IN_SECONDS;
+            $this->ttl = is_scalar($ttl) && (int)$ttl > 30 ? (int)$ttl : HOUR_IN_SECONDS;
         }
 
         return $this->ttl;

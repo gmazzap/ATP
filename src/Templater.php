@@ -67,9 +67,9 @@ class Templater
         global $post;
         $post_attr = '';
         $post instanceof \WP_Post and $post_attr = sprintf(' data-post="%d"', $post->ID);
-        empty($content) and $content = $this->getHtmlContent($name, $slug);
+        empty($content) and $content = $this->htmlContent($name, $slug);
 
-        $class = $this->getHtmlClass($name, $slug);
+        $class = $this->htmlClass($name, $slug);
         $attr = empty($content) && empty($class) ? ' style="display:none!important;"' : '';
         $id = md5($name.$slug.$n);
         $attr .= " id=\"ajaxtemplate-{$id}\"";
@@ -87,7 +87,7 @@ class Templater
         if (wp_script_is('ajax-template-part', 'queue')) {
             return $this;
         }
-        $args = ['ajax-template-part', $this->getJsUrl(), ['jquery'], $this->getJsVer(), true];
+        $args = ['ajax-template-part', $this->jsUrl(), ['jquery'], $this->jsVer(), true];
         call_user_func_array('wp_enqueue_script', $args);
         $ajax_url = apply_filters('ajax_template_ajax_url', admin_url('admin-ajax.php'));
         $data = [
@@ -106,7 +106,7 @@ class Templater
      * @param  string $slug
      * @return string
      */
-    private function getHtmlClass($name, $slug)
+    private function htmlClass($name, $slug)
     {
         $class = apply_filters('ajax_template_loading_class', '', $name, $slug, $this->query);
         if (! is_string($class) || empty($class)) {
@@ -121,7 +121,7 @@ class Templater
      * @param  string $slug
      * @return string
      */
-    private function getHtmlContent($name, $slug)
+    private function htmlContent($name, $slug)
     {
         $content = apply_filters('ajax_template_loading_content', '', $name, $slug, $this->query);
         if (! is_string($content) || empty($content)) {
@@ -134,7 +134,7 @@ class Templater
     /**
      * @return string
      */
-    private function getJsUrl()
+    private function jsUrl()
     {
         $min = $this->debug ? '' : '.min';
 
@@ -144,7 +144,7 @@ class Templater
     /**
      * @return string
      */
-    private function getJsVer()
+    private function jsVer()
     {
         if ($this->debug) {
             return (string) time();
