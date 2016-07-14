@@ -32,7 +32,7 @@ class TransientHandler implements HandlerInterface
      */
     public function get($key)
     {
-        return get_transient($key) ?: false;
+        return get_transient($key) ? : false;
     }
 
     /**

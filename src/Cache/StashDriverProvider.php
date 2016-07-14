@@ -11,6 +11,7 @@
 namespace GM\ATP\Cache;
 
 use GM\ATP\FileSystem;
+use Stash\Driver\FileSystem as FileSystemDriver;
 use Stash\Interfaces\DriverInterface;
 
 /**
@@ -45,17 +46,19 @@ class StashDriverProvider
      */
     public function getDriverClass()
     {
-        $driver = apply_filters('ajax_template_cache_driver', '\Stash\Driver\FileSystem');
+        $driver = apply_filters('ajax_template_cache_driver', FileSystemDriver::class);
 
         if (
-            is_string($driver)
-            && method_exists($driver, 'isAvailable')
-            && call_user_func([$driver, 'isAvailable'])
+            ! is_subclass_of($driver, DriverInterface::class, true)
+            || $driver === FileSystemDriver::class
         ) {
-            return $driver;
+            return FileSystemDriver::class;
         }
 
-        return '\Stash\Driver\FileSystem';
+        /** @var callable $cb */
+        $cb = [$driver, 'isAvailable'];
+
+        return $cb() ? $driver : FileSystemDriver::class;
     }
 
     /**
@@ -83,29 +86,5 @@ class StashDriverProvider
         $name = strtolower($driver_name);
 
         return apply_filters("ajax_template_{$name}_driver_conf", []);
-    }
-
-    /**
-     * @param  null $driver
-     * @param  null $options
-     * @return bool
-     */
-    public function checkDriver($driver = null, $options = null)
-    {
-        if (! is_array($options) || ! $driver instanceof DriverInterface) {
-            return false;
-        }
-
-        if (! call_user_func([get_class($driver), 'isAvailable'])) {
-            return false;
-        }
-
-        try {
-            $driver->setOptions($options);
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
     }
 }

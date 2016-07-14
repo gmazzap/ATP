@@ -34,7 +34,7 @@ class StashHandler implements HandlerInterface
     }
 
     /**
-     * @param  string          $key
+     * @param  string $key
      * @return bool|\Exception
      */
     public function clear($key)
@@ -117,7 +117,7 @@ class StashHandler implements HandlerInterface
     private function getItem($key)
     {
         try {
-            return $this->getStash()->getItem($key);
+            return $this->stash->getItem($key);
         } catch (\Exception $e) {
             return;
         }

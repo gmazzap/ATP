@@ -78,7 +78,7 @@ function ajax_callback()
 }
 
 /**
- * @return \GM\ATP\Stash|void
+ * @return \Stash\Pool|void
  */
 function get_stash()
 {
@@ -94,7 +94,7 @@ function get_stash()
         $options = $provider->getDriverOptions($class);
         $driver->setOptions($options);
 
-        return new Stash($driver);
+        return new Pool($driver);
     }
 }
 

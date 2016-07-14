@@ -147,9 +147,9 @@ class Templater
     private function jsVer()
     {
         if ($this->debug) {
-            return (string) time();
+            return (string)time();
         }
 
-        return @filemtime(dirname($this->path).'/js/atp.min.js') ?: null;
+        return @filemtime(dirname($this->path).'/js/atp.min.js') ? : null;
     }
 }

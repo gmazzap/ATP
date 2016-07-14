@@ -99,7 +99,7 @@ class Loader
             ]
         ]);
 
-        $this->query_data = $request['query_data'] ?: [];
+        $this->query_data = $request['query_data'] ? : [];
         $this->templates_data = $request['files_data'];
         $posts_data = array_filter(array_unique($request['posts_data']));
         $this->posts_data = (count($posts_data) > 1) ? $request['posts_data'] : [];
@@ -145,7 +145,7 @@ class Loader
      */
     private function checkTemplateData($template)
     {
-        $data = array_values((array) $template);
+        $data = array_values((array)$template);
         if (empty($data) || ! is_string($data[0])) {
             return [];
         }
@@ -166,7 +166,7 @@ class Loader
      */
     private function loadTemplate($args, $id)
     {
-        if (isset($this->posts_data[$id]) && (int) $this->posts_data[$id] > 0) {
+        if (isset($this->posts_data[$id]) && (int)$this->posts_data[$id] > 0) {
             $GLOBALS['post'] = get_post($this->posts_data[$id]);
             setup_postdata($GLOBALS['post']);
         }
