@@ -23,7 +23,6 @@
     },
     "require":     {
         "php":                 ">=5.4",
-        "pimple/pimple":       "~3.0",
         "composer/installers": "~1.0",
         "tedivm/stash":        "~0.14.0"
     },
@@ -32,7 +31,7 @@
             "GM\\ATP\\": "src/"
         },
         "files": [
-            "helpers.php"
+            "inc/helpers.php"
         ]
     },
     "config":      {
