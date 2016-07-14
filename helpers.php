@@ -1,14 +1,34 @@
-<?php namespace GM\ATP;
+<?php
+/*
+ * This file is part of the ATP package.
+ *
+ * (c) Giuseppe Mazzapica <giuseppe.mazzapica@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+namespace GM\ATP;
+
+/**
+ * Instantiate a container instance.
+ *
+ * @param array $values
+ * @return \GM\ATP\Container
+ */
 function get_container($values = [])
 {
-    static $container = NULL;
+    static $container = null;
     if (is_null($container)) {
         $container = new Container($values);
     }
+
     return $container;
 }
 
+/**
+ * Plugin activation callback.
+ */
 function activate()
 {
     $container = get_container();
@@ -16,6 +36,9 @@ function activate()
     wp_schedule_event(time(), 'daily', 'ajaxtemplatepart_cache_purge');
 }
 
+/**
+ * Plugin deactivation callback.
+ */
 function deactivate()
 {
     $container = get_container();
@@ -25,19 +48,31 @@ function deactivate()
     }
 }
 
+/**
+ * @param string $name
+ * @param string $slug
+ * @param string $content
+ */
 function template_part($name, $slug = '', $content = '')
 {
     if (defined('DOING_AJAX') && DOING_AJAX) {
         return \get_template_part($name, $slug);
     }
     $container = get_container();
+    /** @var Templater $templater */
     $templater = $container['templater'];
-    $templater->addJs();
-    $templater->addHtml($name, $slug, $content);
+    $templater->addJs()->addHtml($name, $slug, $content);
 }
 
+/**
+ * AJAX callback.
+ */
 function ajax_callback()
 {
+    if (! defined('DOING_AJAX') || ! DOING_AJAX) {
+        return;
+    }
+
     $cont = get_container();
     $loader = $cont['loader'];
     $provider = $cont['cache.provider'];
@@ -58,6 +93,9 @@ function ajax_callback()
     exit();
 }
 
+/**
+ * Purge cache.
+ */
 function cache_purge()
 {
     $container = get_container();

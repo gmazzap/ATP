@@ -4,7 +4,6 @@
   Plugin URI: https://github.com/Giuseppe-Mazzapica/ajax-template-part
   Description: Introduce ajax_template_part() function: like get_template_part(), but AJAX powered.
   Author: Giuseppe Mazzapica
-  Author URI: http://gm.zoomlab.it/
   License: MIT
  */
 
@@ -43,6 +42,10 @@ add_action("wp_ajax_nopriv_ajaxtemplatepart", ' GM\ATP\ajax_callback');
 
 if ( ! function_exists('ajax_template_part')) {
 
+    /**
+     * @param string $name
+     * @param string $slug
+     */
     function ajax_template_part($name, $slug = '')
     {
         GM\ATP\template_part($name, $slug);
@@ -52,6 +55,11 @@ if ( ! function_exists('ajax_template_part')) {
 
 if ( ! function_exists('ajax_template_part_content')) {
 
+    /**
+     * @param string $content
+     * @param string $name
+     * @param string $slug
+     */
     function ajax_template_part_content($content, $name, $slug = '')
     {
         GM\ATP\template_part($name, $slug, $content);
