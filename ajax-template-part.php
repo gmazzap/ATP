@@ -40,8 +40,7 @@ add_action('ajaxtemplatepart_cache_purge', 'GM\ATP\cache_purge');
 add_action("wp_ajax_ajaxtemplatepart", 'GM\ATP\ajax_callback');
 add_action("wp_ajax_nopriv_ajaxtemplatepart", ' GM\ATP\ajax_callback');
 
-if ( ! function_exists('ajax_template_part')) {
-
+if (! function_exists('ajax_template_part')) {
     /**
      * @param string $name
      * @param string $slug
@@ -50,11 +49,9 @@ if ( ! function_exists('ajax_template_part')) {
     {
         GM\ATP\template_part($name, $slug);
     }
-
 }
 
-if ( ! function_exists('ajax_template_part_content')) {
-
+if (! function_exists('ajax_template_part_content')) {
     /**
      * @param string $content
      * @param string $name
@@ -64,5 +61,4 @@ if ( ! function_exists('ajax_template_part_content')) {
     {
         GM\ATP\template_part($name, $slug, $content);
     }
-
 }

@@ -52,7 +52,7 @@ function template_part($name, $slug = '', $content = '')
  */
 function ajax_callback()
 {
-    if ( ! defined('DOING_AJAX') || ! DOING_AJAX) {
+    if (! defined('DOING_AJAX') || ! DOING_AJAX) {
         return;
     }
 
@@ -80,11 +80,11 @@ function ajax_callback()
 /**
  * @return \GM\ATP\Stash|void
  */
-function get_stash() {
-
+function get_stash()
+{
     $drivers = DriverList::getAvailableDrivers();
     $provider = new Cache\StashDriverProvider(new FileSystem(), $drivers);
-    $class = '\\'.ltrim($provider->getDriverClass(), '\\');
+    $class = $provider->getDriverClass();
     if (! class_exists($class)) {
         return;
     }
@@ -101,8 +101,8 @@ function get_stash() {
 /**
  * @return \GM\ATP\Cache\HandlerInterface
  */
-function get_cache_handler() {
-
+function get_cache_handler()
+{
     static $handler;
     if (! is_null($handler)) {
         return $handler;
