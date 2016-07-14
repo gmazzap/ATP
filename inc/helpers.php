@@ -29,6 +29,8 @@ function deactivate()
 {
     $stash = get_stash();
     $stash instanceof Pool and $stash->flush();
+    $timestamp = wp_next_scheduled('ajaxtemplatepart_cache_purge');
+    $timestamp and wp_unschedule_event($timestamp, 'ajaxtemplatepart_cache_purge');
 }
 
 /**
