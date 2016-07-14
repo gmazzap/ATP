@@ -1,12 +1,14 @@
 (function ($, ATP) {
 
+    "use strict"
+
     ATP.methods = {};
     ATP.map = {ids: [], spans: {}, slugs: {}, posts: {}};
 
     ATP.methods.checkResponse = function (response) {
         return typeof response.success !== 'undefined'
-                && response.success
-                && typeof response.data === 'object';
+            && response.success
+            && typeof response.data === 'object';
     };
 
     ATP.methods.onError = function () {
@@ -49,8 +51,8 @@
         $('span[data-ajaxtemplate]').each(function (i, el) {
             var $el = $(el);
             var id = $el.attr('id');
-            var rawdata = decodeURIComponent($el.data('ajaxtemplate').replace(/\+/g, ' '));
-            var templateData = $.parseJSON(rawdata);
+            var rawData = decodeURIComponent($el.data('ajaxtemplate').replace(/\+/g, ' '));
+            var templateData = $.parseJSON(rawData);
             var name = templateData.name;
             var slug = templateData.slug;
             var post = $el.data('post');
@@ -74,15 +76,18 @@
         if (ATP.map.ids.length < 1) {
             return false;
         }
-        ATP.methods.callAjax().done(function (response) {
-            if (ATP.methods.checkResponse(response)) {
-                ATP.methods.onSuccess(response.data);
-            } else {
+        ATP.methods
+            .callAjax()
+            .done(function (response) {
+                if (ATP.methods.checkResponse(response)) {
+                    ATP.methods.onSuccess(response.data);
+                } else {
+                    ATP.methods.onError();
+                }
+            })
+            .fail(function () {
                 ATP.methods.onError();
-            }
-        }).fail(function () {
-            ATP.methods.onError();
-        });
+            });
     };
 
     $(document).ready(function () {
