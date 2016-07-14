@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+namespace GM\ATP;
+
 /**
  * @author  Giuseppe Mazzapica <giuseppe.mazzapica@gmail.com>
  * @license http://opensource.org/licenses/MIT MIT
