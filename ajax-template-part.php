@@ -39,7 +39,7 @@ register_deactivation_hook(__FILE__, 'GM\ATP\deactivate');
 
 add_action('ajaxtemplatepart_cache_purge', 'GM\ATP\cache_purge');
 add_action("wp_ajax_ajaxtemplatepart", 'GM\ATP\ajax_callback');
-add_action("wp_ajax_nopriv_ajaxtemplatepart", ' GM\ATP\ajax_callback');
+add_action("wp_ajax_nopriv_ajaxtemplatepart", 'GM\ATP\ajax_callback');
 
 if ( ! function_exists('ajax_template_part')) {
 
